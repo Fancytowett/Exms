@@ -25,6 +25,12 @@ Route::group(['prefix'=>'Admin','namespace'=>'Admin'],function(){
     Route::post('/add/stream','StreamController@store')->name('add.stream');
     Route::get('/year/create','YearController@create')->name('year.create');
     Route::post('/add/year','YearController@store')->name('year.store');
+    Route::get('/exam/create','ExamController@create')->name('exam.create');
+    Route::post('/add/exam','ExamController@store')->name('exam.store');
+    Route::get('/class/create','ClassController@create')->name('class.create');
+    Route::post('/add/create','ClassController@store')->name('class.store');
+    Route::get('/term/create','TermController@create')->name('term.create');
+    Route::post('/add/term','TermController@store')->name('term.store');
 
 
 });

@@ -17,10 +17,9 @@ class GuardianController extends Controller
         $this->validate($request,[
             'fname'=>'required',
             'lname'=>'required',
-            'mname'=>'required',
             'phone1'=>'required|min:10',
             'phone2'=>'required|min:10',
-            'stud_adm_no'=>'required'
+
         ],[
             'stud_adm_no'=>'Admission number must be unique'
         ]);
@@ -29,7 +28,6 @@ class GuardianController extends Controller
         $guardian->lname=$request->input('lname');
         $guardian->phone1=$request->input('phone1');
         $guardian->phone2=$request->input('phone2');
-        $guardian->stud_adm_no=$request->input('stud_adm_no');
         $guardian->save();
 
         return redirect()->back()->with('successMsg','Guardian successfully saved');

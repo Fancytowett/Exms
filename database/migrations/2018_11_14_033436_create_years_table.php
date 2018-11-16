@@ -17,8 +17,8 @@ class CreateYearsTable extends Migration
             $table->increments('id');
             $table->string('class');
             $table->string('term');
-            $table->string('exam_id')->unsigned();
-            $table->string('exam_id')->references('id')->on('streams')->onDelete('cascade');
+            $table->integer('exam_id')->unsigned();
+            $table->foreign('exam_id')->references('id')->on('streams')->onDelete('cascade');
             $table->string('class_teacher');
             $table->string('stream');
             $table->string('year');

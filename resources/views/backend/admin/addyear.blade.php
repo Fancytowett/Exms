@@ -4,6 +4,11 @@
         <div class="row justify-content-center">
            <div class="col-6">
                <div class="card">
+                   @if(session('SuccessMsg'))
+                       <div class="alert alert-success">
+                           {{session('SuccessMsg')}}
+                       </div>
+                   @endif
                    <div class="card-header">
                        <h2 class="text-center">Year's Details</h2>
 
@@ -21,10 +26,10 @@
                        <div class="form-group">
                            <label>Form:</label>
                            <select name="class" class="form-control">
-                               <option value="1">Form One</option>
-                               <option value="2">Form Two</option>
-                               <option value="3">Form Three</option>
-                               <option value="4">Form Four</option>
+                               @foreach($darasas as $darasa)
+                               <option value="{{$darasa->id}}">{{$darasa->name}}</option>
+                                   @endforeach
+
                            </select>@if($errors->has('class'))
                                <p class="text-danger">{{$errors->first('class')}}</p>
                            @endif
@@ -33,8 +38,7 @@
                            <label>Term:</label>
                            <select name="term" class="form-control">
                                <option value="1">Term One</option>
-                               <option value="2">Term Two</option>
-                               <option value="3">Term Three</option>
+
                            </select>
                            @if($errors->has('term'))
                                <p class="text-danger">{{$errors->first('term')}}</p>

@@ -1,16 +1,16 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
-use App\Stream;
-use Illuminate\Http\Request;
+use App\Darasa;
 use App\Http\Controllers\Controller;
 
-class StreamController extends Controller
+use Illuminate\Http\Request;
+
+class ClassController extends Controller
 {
     public function create()
     {
-        return view('backend.admin.addstream');
+        return view('backend.admin.addclass');
     }
 
     public function store(Request $request)
@@ -18,7 +18,8 @@ class StreamController extends Controller
         $this->validate($request,[
             'name'=>'required'
         ]);
-        Stream::create($request->all());
-        return back()->with('SuccessMsg','Stream successfully added');
+        Darasa::create($request->all());
+
+        return back()->with('SuccessMsg','Class successfully added');
     }
 }

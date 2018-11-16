@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Clerk;
 
+use App\Darasa;
+use App\Guardian;
 use App\Stream;
 use App\Student;
 use Illuminate\Http\Request;
@@ -11,8 +13,10 @@ class StudentController extends Controller
 {
     public function create()
     {
+        $darasas=Darasa::all();
         $streams= Stream::all();
-       return view('backend.clerk.add_student',compact('streams'));
+        $guardians= Guardian::all();
+       return view('backend.clerk.add_student',compact('streams','darasas','guardians'));
     }
 
     public function store(Request $request)

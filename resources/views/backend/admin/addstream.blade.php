@@ -5,7 +5,7 @@
             <div class="col-6">
                 @if(session('SuccessMsg'))
                     <div class="alert alert-success">
-                        {{session('successMsg')}}
+                        {{session('SuccessMsg')}}
                     </div>
                 @endif
                 <div class="card">

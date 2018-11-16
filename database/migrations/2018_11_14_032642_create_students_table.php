@@ -15,14 +15,17 @@ class CreateStudentsTable extends Migration
     {
         Schema::create('students', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('adm_no')->unique();
             $table->string('fname');
-            $table->string('lname');
+            $table->string('lname')->nullable();
             $table->string('mname');
+            $table->string('adm_no')->unique();
             $table->integer('year');
-            $table->string('class')->default(1);
+            $table->integer('class_id')->unsigned()->default(1);
+            $table->foreign('class_id')->references('id')->on('darasas')->onDelete('cascade');
             $table->integer('stream_id')->unsigned()->default(1);
             $table->foreign('stream_id')->references('id')->on('streams')->onDelete('cascade');
+            $table->integer('guardian_id')->unsigned();
+            $table->foreign('guardian_id')->references('id')->on('guardians')->cascade('onDelete');
 
 //            $table->integer('guardian_id')->unsigned();
 //            $table->foreign('guardian_id')->references('id')->on('guardians')->onDelete('cascade');

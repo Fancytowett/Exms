@@ -3,7 +3,7 @@
     <div class="container-fluid">
         <div class="row justify-content-center">
             <div class="col-6">
-                @if(session('SuccessMsg'))
+                @if(session('successMsg'))
                     <div class="alert alert-success">
                         {{session('successMsg')}}
                     </div>
@@ -48,10 +48,9 @@
                             <div class="form-group">
                                 <label for="form"> Form</label>
                                 <select class="form-control" name="class">
-                                    <option value="1">Form One</option>
-                                    <option value="2">Form Two</option>
-                                    <option value="3">Form Three</option>
-                                    <option value="4">Form Four</option>
+                                    @foreach($darasas as $darasa)
+                                    <option value="{{$darasa->id}}"> {{$darasa->name}}</option>
+                                    @endforeach
                                 </select>
                                 @if($errors->has('class'))
                                     <p class="text-danger">{{$errors->first('class')}}</p>
@@ -67,6 +66,17 @@
                                 </select>
                                 @if($errors->has('stream_id'))
                                     <p class="text-danger">{{$errors->first('stream_id')}}</p>
+                                @endif
+                            </div>
+                            <div class="form-group">
+                                <label for="form"> Guardian</label>
+                                <select class="form-control" name="class">
+                                    @foreach($guardians as $guardian)
+                                        <option value="{{$guardian->id}}"> {{$guardian->fname}}</option>
+                                    @endforeach
+                                </select>
+                                @if($errors->has('class'))
+                                    <p class="text-danger">{{$errors->first('class')}}</p>
                                 @endif
                             </div>
                             <div class="form-group">

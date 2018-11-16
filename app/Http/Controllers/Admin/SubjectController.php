@@ -24,6 +24,6 @@ class SubjectController extends Controller
         ]);
         Subject::create($request->all());
 
-        return redirect()->back()->with('successMsg','Subject successfully added');
+        return redirect()->back()->with('SuccessMsg','Subject successfully added');
     }
 }

@@ -19,7 +19,6 @@ class CreateGuardiansTable extends Migration
             $table->string('lname');
             $table->string('phone1');
             $table->string('phone2');
-            $table->string('stud_adm_no')->unique();
             $table->timestamps();
         });
     }

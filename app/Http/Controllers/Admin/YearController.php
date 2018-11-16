@@ -27,6 +27,7 @@ class YearController extends Controller
            'class_teacher'=>'required',
            'year'=>'required'
        ]);
+       return back()->with('SuccessMsg','Year successfully recorded');
 
     }
 }

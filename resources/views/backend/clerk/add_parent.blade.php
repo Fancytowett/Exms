@@ -3,7 +3,7 @@
     <div class="container-fluid">
         <div class="row justify-content-center">
             <div class="col-6">
-                @if(session('SuccessMsg'))
+                @if(session('successMsg'))
                     <div class="alert alert-success">
                         {{session('successMsg')}}
                     </div>
@@ -24,13 +24,7 @@
                                     <p class="text-danger">{{$errors->first('fname')}}</p>
                                     @endif
                             </div>
-                            <div class="form-group">
-                                <label for="m_name">Middle Name:</label>
-                                <input type="text" class="form-control" name="mname" placeholder="Middle Name">
-                                @if($errors->has('mname'))
-                                    <p class="text-danger">{{$errors->first('mname')}}</p>
-                                @endif
-                            </div>
+
                             <div class="form-group">
                                 <label for="l_name">Last Name:</label>
                                 <input type="text" class="form-control" name="lname" placeholder=" Last Name">
@@ -38,13 +32,7 @@
                                     <p class="text-danger">{{$errors->first('lname')}}</p>
                                 @endif
                             </div>
-                            <div class="form-group">
-                                <label for="student_id">Student Admisson_no</label>
-                                <input type="number" class="form-control" name="stud_adm_no" placeholder=" student admission no.">
-                                @if($errors->has('lname'))
-                                    <p class="text-danger">{{$errors->first('lname')}}</p>
-                                @endif
-                            </div>
+
 
                             <div class="form-group">
                                 <label for="phone1">Phone Number 1</label>
