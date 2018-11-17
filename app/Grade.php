@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Grade extends Model
 {
-    protected $fillable=['subject_id','range','grade'];
+    protected $fillable=['subject_id','minrange','maxrange','grade'];
 
     public function subject()
     {

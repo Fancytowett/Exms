@@ -19,8 +19,10 @@ class CreateTeacherSubjectClassesTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->integer('subject_id')->unsigned();
             $table->foreign('subject_id')->references('id')->on('subjects')->onDelete('cascade');
-            $table->string('stream');
-            $table->string('class');
+            $table->integer('stream_id')->unsigned()->default(1);
+            $table->foreign('stream_id')->references('id')->on('streams')->onDelete('cascade');
+            $table->integer('darasa_id')->unsigned()->default(1);
+            $table->foreign('darasa_id')->references('id')->on('darasas')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -19,18 +19,26 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::group(['prefix'=>'Admin','namespace'=>'Admin'],function(){
-    Route::get('/subject/create','SubjectController@create')->name('subject.create');
-    Route::post('/add/subject','SubjectController@store')->name('add.subject');
-    Route::get('/stream/create','StreamController@create')->name('stream.create');
-    Route::post('/add/stream','StreamController@store')->name('add.stream');
-    Route::get('/year/create','YearController@create')->name('year.create');
-    Route::post('/add/year','YearController@store')->name('year.store');
-    Route::get('/exam/create','ExamController@create')->name('exam.create');
-    Route::post('/add/exam','ExamController@store')->name('exam.store');
-    Route::get('/class/create','ClassController@create')->name('class.create');
-    Route::post('/add/create','ClassController@store')->name('class.store');
-    Route::get('/term/create','TermController@create')->name('term.create');
-    Route::post('/add/term','TermController@store')->name('term.store');
+    Route::get('/subject/create','AdminController@subjectCreate')->name('subject.create');
+    Route::post('/add/subject','AdminController@subjectStore')->name('add.subject');
+    Route::get('/stream/create','AdminController@streamCreate')->name('stream.create');
+    Route::post('/add/stream','AdminController@streamStore')->name('add.stream');
+    Route::get('/year/create','AdminController@yearCreate')->name('year.create');
+    Route::post('/add/year','AdminController@yearStore')->name('year.store');
+    Route::get('/exam/create','AdminController@examCreate')->name('exam.create');
+    Route::post('/add/exam','AdminController@examStore')->name('exam.store');
+    Route::get('/class/create','AdminController@classCreate')->name('class.create');
+    Route::post('/add/create','AdminController@classStore')->name('class.store');
+    Route::get('/term/create','AdminController@termCreate')->name('term.create');
+    Route::post('/add/term','AdminController@termStore')->name('term.store');
+    Route::get('/grade/create','AdminController@grade_create')->name('grade.create');
+    Route::post('/add/grade','AdminController@grade_save')->name('grade.store');
+    Route::get('/subjectteacher/create','AdminController@add_subjectteacher')->name('subjectteacher.create');
+    Route::post('/add/subjectteacher','AdminController@subjectteacher_save')->name('subjectteacher.store');
+    Route::get('/studentsubject/create','AdminController@add_studentsubject')->name('studentsubject.create');
+    Route::post('/add/studentsubject','AdminController@studentsubject_save')->name('studentsubject.store');
+    Route::get('/contact/create','AdminController@addcontact')->name('contact.create');
+    Route::post('/add/contact','AdminController@storecontact')->name('contact.store');
 
 
 });
@@ -38,9 +46,11 @@ Route::group(['prefix'=>'Teacher','namespace'=>'Teacher'],function(){
 
 });
 Route::group(['prefix'=>'Clerk','namespace'=>'Clerk'],function(){
-    Route::get('/student/create','StudentController@create')->name('student.create');
-    Route::post('/add/student','StudentController@store')->name('student.add');
-    Route::get('/guardian/create','GuardianController@create')->name('guardian.create');
-    Route::post('/addguardian','GuardianController@store')->name('guardian.add');
+    Route::get('/student/create','ClerkController@studentCreate')->name('student.create');
+    Route::post('/add/student','ClerkController@studentStore')->name('student.add');
+    Route::get('/guardian/create','ClerkController@guardianCreate')->name('guardian.create');
+    Route::post('/addguardian','ClerkController@guardianStore')->name('guardian.add');
+    Route::get('/contact/create','ClerkController@add_contact')->name('contact.create');
+    Route::post('/add/contact','ClerkController@contact_save')->name('contact.store');
 
 });

@@ -42,18 +42,18 @@
                                 <label for="l_name">Last Name:</label>
                                 <input type="text" class="form-control" name="lname" placeholder=" Last Name">
                                 @if($errors->has('lname'))
-                                    <p class="text-danger">{{$errors->first('flname')}}</p>
+                                    <p class="text-danger">{{$errors->first('lname')}}</p>
                                 @endif
                             </div>
                             <div class="form-group">
                                 <label for="form"> Form</label>
-                                <select class="form-control" name="class">
+                                <select class="form-control" name="class_id">
                                     @foreach($darasas as $darasa)
                                     <option value="{{$darasa->id}}"> {{$darasa->name}}</option>
                                     @endforeach
                                 </select>
-                                @if($errors->has('class'))
-                                    <p class="text-danger">{{$errors->first('class')}}</p>
+                                @if($errors->has('class_id'))
+                                    <p class="text-danger">{{$errors->first('class_id')}}</p>
                                 @endif
                             </div>
                             <div class="form-group">
@@ -69,14 +69,12 @@
                                 @endif
                             </div>
                             <div class="form-group">
-                                <label for="form"> Guardian</label>
-                                <select class="form-control" name="class">
-                                    @foreach($guardians as $guardian)
-                                        <option value="{{$guardian->id}}"> {{$guardian->fname}}</option>
-                                    @endforeach
-                                </select>
-                                @if($errors->has('class'))
-                                    <p class="text-danger">{{$errors->first('class')}}</p>
+                                <label for="form"> Guardian Phone Number</label>
+
+                                    <input type="text" class="form-control" name="phone" placeholder="Guardian phone number">
+
+                                @if($errors->has('phone'))
+                                    <p class="text-danger">{{$errors->first('phone')}}</p>
                                 @endif
                             </div>
                             <div class="form-group">

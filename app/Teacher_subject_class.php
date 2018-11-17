@@ -19,5 +19,10 @@ class Teacher_subject_class extends Model
 
     }
 
+    public function streams()
+    {
+        return $this->hasMany('App\Stream');
+    }
+
 
 }

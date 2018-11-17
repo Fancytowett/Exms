@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateGradesTable extends Migration
+class CreateContactsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,10 @@ class CreateGradesTable extends Migration
      */
     public function up()
     {
-        Schema::create('grades', function (Blueprint $table) {
+        Schema::create('contacts', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('subject_id')->unsigned()->default(1);
-            $table->foreign('subject_id')->references('id')->on('subjects')->onDelete('cascade');
-            $table->string('grade');
-            $table->integer('minrange');
-            $table->integer('maxrange');
+            $table->string('name')->nullable();
+            $table->string('phone');
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ class CreateGradesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('grades');
+        Schema::dropIfExists('contacts');
     }
 }

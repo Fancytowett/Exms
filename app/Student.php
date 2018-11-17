@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Student extends Model
 {
-    protected $fillable=['guardian_id','fname','mname','lname','year','class','stream_id'];
+    protected $fillable=['phone','fname','mname','lname','year','class_id','stream_id'];
 
     public function guardian()
     {
