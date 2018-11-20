@@ -38,21 +38,7 @@ class ClerkController extends Controller
 
     }
 
-    public function add_contact()
-    {
-        return view('backend.clerk.addcontact');
-    }
 
-    public function contact_save(Request $request)
-    {
-        $this->validate($request,[
-            'name'=>'required',
-            'phone'=>'required'
-        ]);
-        Contact::create($request->all());
-
-        return back()->with('SuccessMsg','Contact successfully created');
-    }
     public function studentCreate()
     {
         $darasas=Darasa::all();

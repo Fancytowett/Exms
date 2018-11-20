@@ -26,12 +26,6 @@ class CreateResultsTable extends Migration
             $table->integer('term_id')->unsigned();
             $table->foreign('term_id')->references('id')->on('terms')->onDelete('cascade');
             $table->string('score');
-            $table->string('class');
-            $table->string('grade');
-            $table->string('stream');
-            $table->integer('year');
-            $table->string('adm_no');
-
             $table->timestamps();
         });
     }

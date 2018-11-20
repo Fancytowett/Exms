@@ -10,11 +10,11 @@
                 @endif
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="text-center">Class Details</h2>
+                        <h2 class="text-center">Exam Details</h2>
                     </div>
 
                         <div class="card-body">
-                            <form action="{{route('class.store')}}" method="post">
+                            <form action="{{route('exam.store')}}" method="post">
                                 @csrf
                             <div class="form-group">
                                 <label>Exam name:</label>
@@ -33,24 +33,26 @@
                         </div>
                         <div class="form-group">
                             <label>Form:</label>
-                            <select name="class" class="form-control">
-                                <option value="1">Form One</option>
-                                <option value="2">Form Two</option>
-                                <option value="3">Form Three</option>
-                                <option value="4">Form Four</option>
-                            </select>@if($errors->has('class'))
-                                <p class="text-danger">{{$errors->first('class')}}</p>
+                            <select name="class_id" class="form-control">
+                                @foreach($darasas as $darasa)
+                                    <option value="{{$darasa->id}}">{{$darasa->name}}</option>
+                                @endforeach
+
+                            </select>
+                            @if($errors->has('class_id'))
+                                <p class="text-danger">{{$errors->first('class_id')}}</p>
                             @endif
                         </div>
                         <div class="form-group">
                             <label>Term:</label>
-                            <select name="term" class="form-control">
-                                <option value="1">Term One</option>
-                                <option value="2">Term Two</option>
-                                <option value="3">Term Three</option>
+                            <select name="term_id" class="form-control">
+                                @foreach($terms as $term)
+                                    <option value="{{$term->id}}">{{$term->name}}</option>
+                                @endforeach
+
                             </select>
-                            @if($errors->has('term'))
-                                <p class="text-danger">{{$errors->first('term')}}</p>
+                            @if($errors->has('term_id'))
+                                <p class="text-danger">{{$errors->first('term_id')}}</p>
                             @endif
                         </div>
                         <div class="form-group">

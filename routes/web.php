@@ -39,6 +39,15 @@ Route::group(['prefix'=>'Admin','namespace'=>'Admin'],function(){
     Route::post('/add/studentsubject','AdminController@studentsubject_save')->name('studentsubject.store');
     Route::get('/contact/create','AdminController@addcontact')->name('contact.create');
     Route::post('/add/contact','AdminController@storecontact')->name('contact.store');
+    Route::get('/result','AdminController@result')->name('result');
+    Route::post('/result/save','AdminController@resultsave')->name('result.save');
+    Route::get('/resultupload/create','AdminController@resultupload')->name('resultupload');
+    Route::post('/resultupload/save','AdminController@resultuploadsave')->name('resultupload.save');
+    Route::get('/upload/create','AdminController@upload')->name('upload.show');
+    Route::post('/upload/save','AdminController@csvstore')->name('upload.save');
+    Route::get('/confirm','AdminController@confirm')->name('confirm');
+//    Route::post('/confirm/save','AdminController@confirmsave')->name('confirm,save');
+
 
 
 });
@@ -50,7 +59,6 @@ Route::group(['prefix'=>'Clerk','namespace'=>'Clerk'],function(){
     Route::post('/add/student','ClerkController@studentStore')->name('student.add');
     Route::get('/guardian/create','ClerkController@guardianCreate')->name('guardian.create');
     Route::post('/addguardian','ClerkController@guardianStore')->name('guardian.add');
-    Route::get('/contact/create','ClerkController@add_contact')->name('contact.create');
-    Route::post('/add/contact','ClerkController@contact_save')->name('contact.store');
+
 
 });
