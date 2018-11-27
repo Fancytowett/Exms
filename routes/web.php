@@ -46,7 +46,13 @@ Route::group(['prefix'=>'Admin','namespace'=>'Admin'],function(){
     Route::get('/upload/create','AdminController@upload')->name('upload.show');
     Route::post('/upload/save','AdminController@csvstore')->name('upload.save');
     Route::get('/confirm','AdminController@confirm')->name('confirm');
-//    Route::post('/confirm/save','AdminController@confirmsave')->name('confirm,save');
+    Route::get('/commit/{set_name}','AdminController@commit')->name('commit');
+    Route::get('/cancel/{set_name}','AdminController@cancelresult')->name('cancel');
+    Route::get('/uncommitted','AdminController@uncommitted')->name('uncommitted');
+    Route::get('/results/download','AdminController@downloadresults')->name('download.results');
+    Route::get('/retrieve','AdminController@retrieve')->name('retrieve');
+
+
 
 
 
@@ -57,8 +63,15 @@ Route::group(['prefix'=>'Teacher','namespace'=>'Teacher'],function(){
 Route::group(['prefix'=>'Clerk','namespace'=>'Clerk'],function(){
     Route::get('/student/create','ClerkController@studentCreate')->name('student.create');
     Route::post('/add/student','ClerkController@studentStore')->name('student.add');
+    Route::get('/student/upload/create','ClerkController@uploadstudent')->name('student.upload');
+    Route::post('/upload/student','ClerkController@studentcsv')->name('studentcsv');
     Route::get('/guardian/create','ClerkController@guardianCreate')->name('guardian.create');
     Route::post('/addguardian','ClerkController@guardianStore')->name('guardian.add');
+    Route::get('/students/export','ClerkController@exportstudents')->name('students');
+    Route::post('/students/download','ClerkController@downloadstudents')->name('download.students');
+    Route::get('/subjectstudents','ClerkController@substudents')->name('substudents');
+    Route::post('/subjectstudents/download','ClerkController@downloadsubjectstudents')->name('subjectstudents');
+
 
 
 });

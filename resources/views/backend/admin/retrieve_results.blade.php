@@ -9,24 +9,12 @@
                     </div>
                 @endif
                 <div class="card">
-                    <div class="card-header">
-                        <h2 class="text-center"> Student Subject  </h2>
-                    </div>
+
+
 
                     <div class="card-body">
-                        <form action="{{route('studentsubject.store')}}" method="post">
+                        <form action="{{route('download.students')}}" method="post">
                             @csrf
-                            <div class="form-group">
-                                <label for="name">Students:</label>
-                                <select name="student_id" class="form-control">
-                                    @foreach($students as $student)
-                                        <option value="{{$student->id}}">{{$student->fname}}</option>
-                                    @endforeach
-                                </select>
-                                @if($errors->has('subject'))
-                                    <p class="text-danger">{{$errors->first('subject')}}</p>
-                                @endif
-                            </div>
                             <div class="form-group">
                                 <label for="form"> Form</label>
                                 <select class="form-control" name="class_id">
@@ -39,6 +27,17 @@
                                 @endif
                             </div>
                             <div class="form-group">
+                                <label for="stream">stream</label>
+                                <select name="stream_id" id="" class="form-control">
+                                    @foreach($streams as $stream)
+                                     <option value="{{$stream->id}}">{{$stream->name}}</option>
+                                    @endforeach
+
+                                </select>
+                                @if($errors->has('stream_id'))
+                                    <p class="text-danger">{{$errors->first('stream_id')}}</p>
+                                @endif
+                            </div> {{--<div class="form-group">
                                 <label for="name">Subject:</label>
                                 <select name="subject_id" class="form-control">
                                     @foreach($subjects as $subject)
@@ -48,25 +47,16 @@
                                 @if($errors->has('subject'))
                                     <p class="text-danger">{{$errors->first('subject')}}</p>
                                 @endif
-                            </div>
-                            <div class="form-group">
-                                <label for="name">Teacher:</label>
-                                <select name="user_id" class="form-control">
-                                    @foreach($users as $user)
-                                        <option value="{{$user->id}}">{{$user->name}}</option>
-                                    @endforeach
-                                </select>
-                                @if($errors->has('user_id'))
-                                    <p class="text-danger">{{$errors->first('user_id')}}</p>
-                                @endif
-                            </div>
+                            </div>--}}
 
 
 
-                            <button type="submit" class="btn btn-block btn-primary">Save</button>
+                            <button type="submit" class="btn btn-block btn-primary">Download</button>
                         </form>
+
                     </div>
                 </div>
+
             </div>
         </div>
     </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Contact;
 use App\Darasa;
 use App\Exam;
+use App\Exports\ResultsExport;
 use App\Result;
 use App\ResultUpload;
 use App\Stream;
@@ -18,6 +19,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminController extends Controller
 {
@@ -199,7 +202,8 @@ class AdminController extends Controller
         $subjects = Subject::all();
         $users = User::all();
         $students = Student::all();
-        return view('backend.admin.add_student_subject', compact('subjects', 'users', 'students'));
+        $darasas=Darasa::all();
+        return view('backend.admin.add_student_subject', compact('subjects', 'users', 'students','darasas'));
     }
 
     public function studentsubject_save(Request $request)
@@ -207,11 +211,12 @@ class AdminController extends Controller
         $this->validate($request, [
             'subject_id' => 'required',
             'student_id' => 'required',
+            'class_id' => 'required',
             'user_id' => 'required'
 
         ]);
-        Student_subject::create($request->all());
-        return back()->with('successMsg', 'Subject Teacher successfully added');
+       Student_subject::create($request->all());
+        return back()->with('successMsg', 'Saved successfully added');
 
     }
 
@@ -266,8 +271,8 @@ class AdminController extends Controller
     }
 
     public function resultuploadsave(Request $request)
-
     {
+
         $this->validate($request, [
             'subject_id' => 'required',
             'exam_id' => 'required',
@@ -331,6 +336,7 @@ class AdminController extends Controller
 
     public function csvstore(Request $request)
     {
+
 //        $student = Student::where(['adm_no' => '5456'])->first();
 //        dd($student);
         $file = $request->file('csvfile');
@@ -352,6 +358,7 @@ class AdminController extends Controller
         $success = 0;
         $failures = 0;
         $non_existant = 0;
+        $set_name=rand(10000,100000);
         while ($columns = fgetcsv($file)) {
             if ($columns[0] == "") {
                 continue;
@@ -376,6 +383,7 @@ class AdminController extends Controller
                         'student_id' => $student_id,
                         'user_id' => Auth::user()->id,
                         'term_id' => $term_id,
+                        'set_name'=>$set_name.'',
                         'exam_id' => $exam_id]);
                     $success++;
                 } else {
@@ -388,15 +396,137 @@ class AdminController extends Controller
 
         }
         // dd($data_big);
-        return redirect()->route('confirm')->with('successMsg', "successfully inserted $success. Errors $failures. student not existing $non_existant");
+        return redirect()->route('confirm')//->with('successMsg', "successfully inserted $success. Errors $failures. student not existing $non_existant")
+                         ->with('set_name',$set_name);
 
     }
 
     public function confirm()
     {
-        $confirms=ResultUpload::where(['user_id'=>Auth::user()->id])->get();
-
-       return view('backend.admin.confirm',compact('confirms'));
+        $set_name=Session::get('set_name');
+        $cancel=$set_name;
+        $confirms = ResultUpload::where(['set_name' => $set_name])->get();
+        return view('backend.admin.confirm', compact('confirms','set_name','cancel'));
     }
+
+
+
+    public function commit( $set_name)
+    {
+
+        $results=ResultUpload::where(['set_name'=>$set_name])->get();
+
+
+        foreach ($results as $result ) {
+
+            $upload = new Result();
+            $upload->subject_id = $result->subject_id;
+            $upload->student_id = $result->student_id;
+            $upload->user_id = $result->user_id;
+            $upload->term_id = $result->term_id;
+            $upload->exam_id = $result->exam_id;
+            $upload->score = $result->score;
+            $upload->set_name = $result->set_name;
+            $upload->save();
+
+
+            $result->delete();
+        }
+            return back()->with('set_name',$set_name)->with('successMsg','Sucessfully commited');
+
+
+
+        /* $student = Student::where(['adm_no' => '5456'])->first();
+ //        dd($student);
+         $file = $request->file('csvfile');
+         $subject_id = $request->input('subject_id');
+         $exam_id = $request->input('exam_id');
+         $term_id = $request->input('term_id');
+         $class_id = $request->input('class_id');
+         $filepath = $file->getRealPath();
+         $file = fopen($filepath, 'r');
+         $header = fgetcsv($file);
+         $escapeHeader = [];
+         foreach ($header as $key => $value) {
+             $lheader = strtolower($value);
+             $escapeItem = preg_replace('/[^a-z]/', '', $lheader);
+             array_push($escapeHeader, $escapeItem);
+
+         }
+         //$data_big=[];
+         $success = 0;
+         $failures = 0;
+         $non_existant = 0;
+         while ($columns = fgetcsv($file)) {
+             if ($columns[0] == "") {
+                 continue;
+             }
+
+
+             $data = array_combine($escapeHeader, $columns);
+             //['subject_id','score','student_id','user_id','term_id','exam_id'];
+             $student = Student::where(['adm_no' => $data['adm']])->first();
+
+             if ($student != null) {
+                 $student_id = $student->id;
+                 $res = Result::where(['subject_id' => $subject_id,
+                     'student_id' => $student_id,
+                     'user_id' => Auth::user()->id,
+                     'term_id' => $term_id,
+                     'exam_id' => $exam_id])->first();
+                 if ($res == null) {
+
+                     Result::create(['subject_id' => $subject_id,
+                         'score' => $data['score'],
+                         'student_id' => $student_id,
+                         'user_id' => Auth::user()->id,
+                         'term_id' => $term_id,
+                         'exam_id' => $exam_id]);
+                     $success++;
+                 } else {
+                     $failures++;
+                 }
+             } else {
+                 $non_existant++;
+             }
+
+
+         }
+         // dd($data_big);
+         return redirect()->route('confirm')->with('successMsg', "successfully inserted $success. Errors $failures. student not existing $non_existant");
+     */
+
+
+
+    }
+
+
+    public function cancelresult($set_name)
+    {
+        $deletes = ResultUpload:: where(['set_name' => $set_name])->get();
+
+        foreach ($deletes as $delete) {
+            $delete->delete();
+        }
+        return redirect()->route('resultupload')->with('set_name',$set_name);
+    }
+
+    public function uncommitted()
+    {
+        $uncommitteds=ResultUpload::where(['user_id'=>Auth::user()->id])->get();
+        return view('backend.admin.uncommitted',compact('uncommitteds'));
+    }
+    public function downloadresults()
+    {
+
+    }
+
+    public function retrieve()
+    {   $subjects=Subject::all();
+        $darasas=Darasa::all();
+        $streams= Stream::all();
+        return view('backend.admin.retrieve_results',compact('darasas','streams','subjects'));
+    }
+
 
 }

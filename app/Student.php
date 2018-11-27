@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Student extends Model
 {
-    protected $fillable=['phone','fname','mname','lname','year','class_id','stream_id'];
+    protected $fillable=['phone','fname','mname','lname','year','class_id','stream_id','adm_no'];
 
-    public function guardian()
+    public function darasa()
     {
-        return $this->belongsTo('App\Guardian');
+        return $this->belongsTo('App\Darasa');
     }
 
     public function stream()

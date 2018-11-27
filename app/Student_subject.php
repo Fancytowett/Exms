@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Student_subject extends Model
 {
-    protected $fillable=['student_id','subject_id','user_id'];
+    protected $fillable=['student_id','subject_id','user_id','class_id'];
 
     public function student()
     {
@@ -22,5 +22,10 @@ class Student_subject extends Model
     public function term()
     {
         return $this->belongsTo('App\Term');
+     }
+
+    public function darasa()
+    {
+     return $this->belongsTo('App\Darasa');
      }
 }

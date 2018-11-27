@@ -19,6 +19,8 @@ class CreateStudentSubjectsTable extends Migration
             $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->integer('class_id')->unsigned();
+            $table->foreign('class_id')->references('id')->on('darasas')->onDelete('cascade');
             $table->integer('subject_id')->unsigned();
             $table->foreign('subject_id')->references('id')->on('subjects')->onDelete('cascade');
             $table->timestamps();
