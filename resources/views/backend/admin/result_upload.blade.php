@@ -32,7 +32,7 @@
                                 <label for="form"> Exam</label>
                                 <select class="form-control" name="exam_id">
                                     @foreach($exams as $exam)
-                                        <option value="{{$exam->id}}"> {{$exam->name}}</option>
+                                        <option value="{{$exam->id}}"> {{$exam->name." ".$exam->year." ".$exam->term->name}}</option>
                                     @endforeach
                                 </select>
                                 @if($errors->has('exam_id'))
@@ -51,7 +51,7 @@
                                 @endif
                             </div>
                             <div class="form-group">
-                                <label for="form"> Term</label>
+                                <label for="form"> Form</label>
                                 <select class="form-control" name="class_id">
                                     @foreach($darasas as $darasa)
                                         <option value="{{$darasa->id}}"> {{$darasa->name}}</option>

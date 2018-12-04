@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateStudentSubjectsTable extends Migration
+class CreateMassAssigmentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,8 @@ class CreateStudentSubjectsTable extends Migration
      */
     public function up()
     {
-        Schema::create('student_subjects', function (Blueprint $table) {
+        Schema::create('mass_assigments', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('student_id')->unsigned();
-            $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->integer('stream_id')->unsigned();
@@ -36,6 +34,6 @@ class CreateStudentSubjectsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('student_subjects');
+        Schema::dropIfExists('mass_assigments');
     }
 }

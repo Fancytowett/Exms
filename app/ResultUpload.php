@@ -28,11 +28,14 @@ class ResultUpload extends Model
         return $this->belongsTo('App\Term');
 
     }
-    public function stream()
-    {
-        return $this->belongsTo('App\Stream');
 
-    }
+//    public function getSubjectNameAttribute()
+//    {
+//        switch($this->subject){
+//
+//        }
+//    }
+
 }
 
 

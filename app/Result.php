@@ -30,6 +30,12 @@ class Result extends Model
         return $this->belongsTo('App\Term');
      }
 
+    public function student()
+    {
+
+        return$this->belongsTo('App\Student');
+     }
+
 
 }
 

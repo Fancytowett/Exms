@@ -8,6 +8,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
+    {{--<script src="https://code.jquery.com/jquery-3.3.1.js" type="text/javascript"></script>--}}
+
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
@@ -18,6 +20,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    @yield('extras')
 </head>
 <body>
     <div id="app">
@@ -49,8 +52,50 @@
                                 @endif
                             </li>
                         @else
+                            <li class="nav-item dropdown">
+
+                                <a class= "nav-link dropdown-toggle" id="dropdownMenuButton" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                   Operations
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="{{route('subject.create')}}">Add Subject</a>
+                                    <a class="dropdown-item" href="{{route('stream.create')}}"> Add Stream</a>
+                                    <a class="dropdown-item" href="{{route('year.create')}}">Add Year</a>
+                                    <a class="dropdown-item" href="{{route('exam.create')}}">Add Exam</a>
+                                    <a class="dropdown-item" href="{{route('class.create')}}">Add Class</a>
+                                    <a class="dropdown-item" href="{{route('term.create')}}">Add Term</a>
+                                    <a class="dropdown-item" href="{{route('grade.create')}}">Add Grade</a>
+                                    <a class="dropdown-item" href="{{route('subjectteacher.create')}}">Add Teachers Subjects</a>
+                                    <a class="dropdown-item" href="{{route('studentsubject.create')}}">Add single Student Subjects</a>
+                                    <a class="dropdown-item" href="{{route('contact.create')}}">Add Contact</a>
+                                    <a class="dropdown-item" href="{{route('student.create')}}">Add Student</a>
+                                    <a class="dropdown-item" href="{{route('guardian.create')}}">Add Guardian</a>
+                                    <a class="dropdown-item" href="{{route('mass')}}">Form Assign Subjects</a>
+                                    <a class="dropdown-item" href="{{route('groupAssign')}}">Mass Assign Subjects</a>
+                                </div>
+
+                            </li>
+                            <li class="nav-item dropdown">
+
+                                <a class= "nav-link dropdown-toggle" id="dropdownMenuButton" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                    Results
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="{{route('streamresults')}}">Stream Results</a>
+                                    <a class="dropdown-item" href="{{route('class_results')}}"> All Results</a>
+
+                                </div>
+
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('substudents') }}"> Students doing  subjects</a>
+                            </li>
+
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('resultupload') }}">Upload Results</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('uncommitted') }}">Uncomitted results</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('substudents') }}">Score Fillable sheets</a>
@@ -58,9 +103,7 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('student.upload') }}">Upload Students</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('download.results') }}">Download Results</a>
-                            </li>
+
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>
@@ -90,6 +133,8 @@
 
         <main class="py-4">
             @yield('content')
+            @yield('scripts')
+
         </main>
     </div>
 </body>

@@ -12,4 +12,9 @@ class Stream extends Model
     {
         return $this->belongsTo('App\Teacher_subject_class');
     }
+
+    public function students()
+    {
+      return $this->hasMany('App\Student');
+    }
 }

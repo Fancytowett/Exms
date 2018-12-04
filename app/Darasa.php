@@ -17,4 +17,11 @@ class Darasa extends Model
     {
      return $this->hasMany('App\Student_subject');
     }
+
+    public function exams()
+    {
+        return $this->hasMany('App\Exam');
+    }
+
+
 }

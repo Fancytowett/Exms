@@ -12,35 +12,30 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h2>Results</h2>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <a href="{{route('confirm')}}" class="btn btn-sm btn-primary"> More Details</a>
+                        <h2> Uncommitted Results</h2>
 
-                            </div>
-                            <div class="col-md-6">
-                            </div>
-                        </div>
                     </div>
 
                     <div class="card-body">
                         <table class="table table-striped">
                             <tr>
-                                <th>Student </th>
+                                <th>Date uploaded </th>
+                                <th>Set_name</th>
                                 <th>Subject</th>
-                                <th>Score</th>
-                                <th>Term</th>
-                                <th>Exam</th>
-                                <th>Teacher</th>
+                                <th>Uploaded By</th>
+                                <th>Action</th>
+
                             </tr>
                             @foreach($uncommitteds as $uncommitted)
                                 <tr>
-                                    <td>{{$uncommitted->student->fname." ".$uncommitted->student->mname." ".$uncommitted->student->lname}}</td>
-                                    <td>{{$uncommitted->subject->name}}</td>
-                                    <td>{{$uncommitted->score}}</td>
-                                    <td>{{$uncommitted->term->name}}</td>
-                                    <td>{{$uncommitted->exam->name}}</td>
-                                    <td>{{Auth::user()->name}}</td>
+                                    <td>{{$uncommitted->created_at}}</td>
+                                    <td>{{$uncommitted->set_name}}</td>
+                                    <td>{{$uncommitted->subject_id}}</td>
+                                    <td>{{$uncommitted->user_id}}</td>
+                                    <td><a href="{{route('commit',$uncommitted->set_name)}}" class="btn btn-sm btn-success">Commit</a> </td>
+                                    <td><a href="{{route('cancel',$uncommitted->set_name)}}" class="btn btn-sm btn-danger">Cancel </a></td>
+                                    <td></td>
+
                                 </tr>
                             @endforeach
                         </table>

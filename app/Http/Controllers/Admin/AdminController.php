@@ -9,6 +9,7 @@ use App\Exports\ResultsExport;
 use App\Result;
 use App\ResultUpload;
 use App\Stream;
+use App\Stream_Result;
 use App\Student;
 use App\Student_subject;
 use App\Subject;
@@ -19,6 +20,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -56,6 +58,7 @@ class AdminController extends Controller
             'year' => 'required',
             'term_id' => 'required'
         ]);
+
         Exam::create($request->all());
         return back()->with('SuccessMsg', 'Exam successfully saved');
 
@@ -203,7 +206,8 @@ class AdminController extends Controller
         $users = User::all();
         $students = Student::all();
         $darasas=Darasa::all();
-        return view('backend.admin.add_student_subject', compact('subjects', 'users', 'students','darasas'));
+        $streams=Stream::all();
+        return view('backend.admin.add_student_subject', compact('subjects', 'users', 'students','darasas','streams'));
     }
 
     public function studentsubject_save(Request $request)
@@ -211,14 +215,43 @@ class AdminController extends Controller
         $this->validate($request, [
             'subject_id' => 'required',
             'student_id' => 'required',
-            'class_id' => 'required',
-            'user_id' => 'required'
 
         ]);
-       Student_subject::create($request->all());
-        return back()->with('successMsg', 'Saved successfully added');
+
+        $subject_id=$request->input('subject_id');
+        $student_id=$request->input('student_id');
+        $student=Student::where(['id'=>$student_id])->first();
+
+//        dd($student->class_id);
+        foreach ($subject_id as $subject){
+                    $ss=Student_subject::where([
+                        'subject_id'=>$subject,
+                        'class_id'=>$student->class_id,
+                        'student_id'=>$student->id,
+                        'stream_id'=>$student->stream_id])
+                        ->first();
+
+                    if ($ss==null)
+                    {
+                        Student_subject::create([
+                            'subject_id'=>$subject,
+                            'user_id'=>Auth::user()->id,
+                            'student_id'=>$student->id,
+                            'class_id'=>$student->class_id,
+                            'stream_id'=>$student->stream_id]);
+                    }
+
+
+
+
+
+        }
+        return back()->with('successMsg','Successfully assigned');
+
+
 
     }
+
 
     public function addcontact()
     {
@@ -372,10 +405,12 @@ class AdminController extends Controller
             if ($student != null) {
                 $student_id = $student->id;
                 $res = ResultUpload::where(['subject_id' => $subject_id,
-                    'student_id' => $student_id,
-                    'user_id' => Auth::user()->id,
-                    'term_id' => $term_id,
-                    'exam_id' => $exam_id])->first();
+                                            'student_id' => $student_id,
+                                            'user_id' => Auth::user()->id,
+                                            'term_id' => $term_id,
+                                            'exam_id' => $exam_id])->first();
+
+//                dd($res);
                 if ($res == null) {
 
                     ResultUpload::create(['subject_id' => $subject_id,
@@ -396,7 +431,8 @@ class AdminController extends Controller
 
         }
         // dd($data_big);
-        return redirect()->route('confirm')//->with('successMsg', "successfully inserted $success. Errors $failures. student not existing $non_existant")
+        return redirect()->route('confirm')
+                         ->with('successMsg', "successfully inserted $success. Errors $failures. student not existing $non_existant")
                          ->with('set_name',$set_name);
 
     }
@@ -408,7 +444,13 @@ class AdminController extends Controller
         $confirms = ResultUpload::where(['set_name' => $set_name])->get();
         return view('backend.admin.confirm', compact('confirms','set_name','cancel'));
     }
-
+    public function pending()
+    {
+        $set_name=Session::get('set_name');
+        $cancel=$set_name;
+        $confirms = ResultUpload::where(['set_name' => $set_name])->get();
+        return view('backend.admin.pending_results', compact('confirms','set_name','cancel'));
+    }
 
 
     public function commit( $set_name)
@@ -436,66 +478,6 @@ class AdminController extends Controller
 
 
 
-        /* $student = Student::where(['adm_no' => '5456'])->first();
- //        dd($student);
-         $file = $request->file('csvfile');
-         $subject_id = $request->input('subject_id');
-         $exam_id = $request->input('exam_id');
-         $term_id = $request->input('term_id');
-         $class_id = $request->input('class_id');
-         $filepath = $file->getRealPath();
-         $file = fopen($filepath, 'r');
-         $header = fgetcsv($file);
-         $escapeHeader = [];
-         foreach ($header as $key => $value) {
-             $lheader = strtolower($value);
-             $escapeItem = preg_replace('/[^a-z]/', '', $lheader);
-             array_push($escapeHeader, $escapeItem);
-
-         }
-         //$data_big=[];
-         $success = 0;
-         $failures = 0;
-         $non_existant = 0;
-         while ($columns = fgetcsv($file)) {
-             if ($columns[0] == "") {
-                 continue;
-             }
-
-
-             $data = array_combine($escapeHeader, $columns);
-             //['subject_id','score','student_id','user_id','term_id','exam_id'];
-             $student = Student::where(['adm_no' => $data['adm']])->first();
-
-             if ($student != null) {
-                 $student_id = $student->id;
-                 $res = Result::where(['subject_id' => $subject_id,
-                     'student_id' => $student_id,
-                     'user_id' => Auth::user()->id,
-                     'term_id' => $term_id,
-                     'exam_id' => $exam_id])->first();
-                 if ($res == null) {
-
-                     Result::create(['subject_id' => $subject_id,
-                         'score' => $data['score'],
-                         'student_id' => $student_id,
-                         'user_id' => Auth::user()->id,
-                         'term_id' => $term_id,
-                         'exam_id' => $exam_id]);
-                     $success++;
-                 } else {
-                     $failures++;
-                 }
-             } else {
-                 $non_existant++;
-             }
-
-
-         }
-         // dd($data_big);
-         return redirect()->route('confirm')->with('successMsg', "successfully inserted $success. Errors $failures. student not existing $non_existant");
-     */
-
 
 
     }
@@ -513,7 +495,11 @@ class AdminController extends Controller
 
     public function uncommitted()
     {
-        $uncommitteds=ResultUpload::where(['user_id'=>Auth::user()->id])->get();
+        $uncommitteds=DB::table('result_uploads')
+            ->select(['set_name','user_id','subject_id','created_at'])
+            ->groupBy('set_name')
+            ->get();
+//        dd($uncommitteds);
         return view('backend.admin.uncommitted',compact('uncommitteds'));
     }
     public function downloadresults()
@@ -528,5 +514,149 @@ class AdminController extends Controller
         return view('backend.admin.retrieve_results',compact('darasas','streams','subjects'));
     }
 
+    public function stream_result()
+    {
+
+
+
+        $exams=Exam::all();
+        $streams=Stream::all();
+        $subjects=Subject::all();
+
+         return view('backend.admin.stream_result',compact('exams','streams','subjects'));
+    }
+
+    public function stream_result_save(Request $request)
+    {
+        $this->validate($request, [
+            'stream_id' => 'required',
+            'exam_id' => 'required'
+        ]);
+        $stream_id = $request->input('stream_id');
+        $exam_id = $request->input('exam_id');
+
+        $stream = Stream::find($stream_id);
+
+        $students = $stream->students;
+
+        $subjects = Subject::all();
+        $results = [];
+        $marks=[];
+        foreach ($students as $student) {
+            $results_1 = Result::where(['exam_id' => $exam_id, 'student_id' => $student->id])->get();
+            // dd($results_1);
+            $total = 0;
+
+            $data = [];
+            foreach ($subjects as $subject) {
+                $data[$subject->short_name] = "-";
+            }
+            // dd($data);
+            //$data2=[];
+            foreach ($results_1 as $single) {
+                $total += $single->score;
+                $data[$single->subject->short_name] = $single->score;
+
+            }
+            $marks[] = $total;
+
+
+            $data['names'] = $student->fname . '  ' . $student->lname;
+            $data['adm'] = $student->adm_no;
+            $data['total'] = $total;
+
+
+                $results[] = $data;
+            }
+           // dd($results);
+            $exams = Exam::all();
+            $streams = Stream::all();
+            //  $subjects=Subject::all();
+//        foreach ($results as $result){
+//            foreach ($result as $key=>$value){
+//               var_dump($value);
+//            }
+//        }
+
+            rsort($marks);
+
+            //dd($marks);
+            return view('backend.admin.stream_result', compact('exams', 'streams', 'subjects', 'results','marks'));
+
+            // return back();
+
+
+    }
+
+    public function classResults(Request $request)
+    {
+        $this->validate($request, [
+            'stream_id' => 'required',
+            'exam_id' => 'required'
+        ]);
+        $stream_id = $request->input('stream_id');
+        $exam_id = $request->input('exam_id');
+
+        $streams = Stream::whereIn('id',$stream_id)->get();
+
+     //   dd($streams);
+
+
+
+        $subjects = Subject::all();
+        $results = [];
+        $marks=[];
+        foreach($streams as $stream) {
+            $students = $stream->students;
+
+            foreach ($students as $student) {
+                $results_1 = Result::where(['exam_id' => $exam_id, 'student_id' => $student->id])->get();
+                // dd($results_1);
+                $total = 0;
+
+                $data = [];
+                foreach ($subjects as $subject) {
+                    $data[$subject->short_name] = "-";
+                }
+                // dd($data);
+                //$data2=[];
+                foreach ($results_1 as $single) {
+                    $total += $single->score;
+                    $data[$single->subject->short_name] = $single->score;
+
+                }
+                $marks[] = $total;
+
+
+                $data['names'] = $student->fname . '  ' . $student->lname;
+                $data['adm'] = $student->adm_no;
+                $data['total'] = $total;
+
+
+                $results[] = $data;
+            }
+        }
+
+        rsort($marks);
+        $exams=Exam::all();
+
+//        dd($results);
+        return view('backend.admin.class_results', compact('exams', 'streams', 'subjects', 'results','marks'));
+
+        // return back();
+
+
+    }
+
+    public function class_results ()
+
+    {
+
+        $exams=Exam::all();
+        $streams=Stream::all();
+        $subjects=Subject::all();
+
+        return view('backend.admin.class_results',compact('exams','streams','subjects'));
+    }
 
 }

@@ -51,8 +51,12 @@ Route::group(['prefix'=>'Admin','namespace'=>'Admin'],function(){
     Route::get('/uncommitted','AdminController@uncommitted')->name('uncommitted');
     Route::get('/results/download','AdminController@downloadresults')->name('download.results');
     Route::get('/retrieve','AdminController@retrieve')->name('retrieve');
+    Route::get('/stream/result','AdminController@stream_result')->name('streamresults');
+    Route::post('/stream/result/save','AdminController@stream_result_save')->name('streamresults.display');
 
+    Route::get('/class/results','AdminController@class_results')->name('class_results');
 
+    Route::post('/class/results/save','AdminController@classResults')->name('class.results');
 
 
 
@@ -69,8 +73,13 @@ Route::group(['prefix'=>'Clerk','namespace'=>'Clerk'],function(){
     Route::post('/addguardian','ClerkController@guardianStore')->name('guardian.add');
     Route::get('/students/export','ClerkController@exportstudents')->name('students');
     Route::post('/students/download','ClerkController@downloadstudents')->name('download.students');
-    Route::get('/subjectstudents','ClerkController@substudents')->name('substudents');
+    Route::get('subjectstudents','ClerkController@substudents')->name('substudents');
     Route::post('/subjectstudents/download','ClerkController@downloadsubjectstudents')->name('subjectstudents');
+    Route::get('massassignment','ClerkController@massassignment')->name('mass');
+    Route::post('massassignment/save','ClerkController@mass_save')->name('mass.save');
+    Route::get('/group/assign','ClerkController@group_mass_assign')->name('groupAssign');
+    Route::post('/group/store','ClerkController@groupassign_store')->name('groupassign.store');
+
 
 
 
