@@ -55,10 +55,12 @@
                             @endforeach
                             <th>Total Marks</th>
                             <th>Position</th>
+                            <th>Action</th>
                         </tr>
 
                         </thead>
                         <tbody>
+
                         @foreach($results as $result)
                             <tr>
 
@@ -68,7 +70,7 @@
 
                                     @php
 
-                                        if ($key !="names" and $key!="adm")
+                                        if ($key !="names" and $key!="adm" and $key!="id")
                                         {
                                         echo ' <td>';
                                           echo($result[$key]);
@@ -83,9 +85,13 @@
                                 <td>
                                     {{ array_search($result['total'], $marks)+1 }}
                                 </td>
+
+                                <td><a href="{{route('studentreport',[$result["id"],$result["exam_id"],$result["total"]])}}" class=" btn btn-sm btn-primary">View</a> </td>
+
                             </tr>
 
                         @endforeach
+
                         </tbody>
 
 

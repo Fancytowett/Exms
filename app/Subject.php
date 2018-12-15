@@ -13,6 +13,11 @@ class Subject extends Model
       return $this->hasMany('App\User');
    }
 
+    public function resultuploads()
+    {
+        return $this->hasMany('App\ResultUpload');
+   }
+
 
 }
 

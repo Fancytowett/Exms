@@ -34,6 +34,7 @@
                             <th>Score</th>
                             <th>Term</th>
                             <th>Exam</th>
+                            <th>Grade</th>
                             <th>Teacher</th>
                         </tr>
                         @foreach($confirms as $confirm)
@@ -43,6 +44,8 @@
                                 <td>{{$confirm->score}}</td>
                                 <td>{{$confirm->term->name}}</td>
                                 <td>{{$confirm->exam->name}}</td>
+                                <td>{{$confirm->grade}}</td>
+
                                 <td>{{Auth::user()->name}}</td>
                             </tr>
                             @endforeach

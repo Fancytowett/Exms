@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateOverrallGradesTable extends Migration
+class CreateOverrallgradesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,12 @@ class CreateOverrallGradesTable extends Migration
      */
     public function up()
     {
-        Schema::create('overrall_grades', function (Blueprint $table) {
+        Schema::create('overrallgrades', function (Blueprint $table) {
+
+
             $table->increments('id');
-            $table->string('range');
+            $table->double('minrange');
+            $table->double('maxrange');
             $table->string('grade');
             $table->timestamps();
         });
@@ -28,6 +31,6 @@ class CreateOverrallGradesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('overrall_grades');
+        Schema::dropIfExists('overrallgrades');
     }
 }

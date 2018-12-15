@@ -55,8 +55,16 @@ Route::group(['prefix'=>'Admin','namespace'=>'Admin'],function(){
     Route::post('/stream/result/save','AdminController@stream_result_save')->name('streamresults.display');
 
     Route::get('/class/results','AdminController@class_results')->name('class_results');
+    Route::get('/overrall/grades','AdminController@overrallgrades')->name('overrallgrades');
+
+    Route::get('/studentreport/view','AdminController@student_report')->name('student.report');
+    Route::post('/studentreport','AdminController@studentreport')->name('studentreport');
+
+    Route::post('/overrall/grades/save','AdminController@overrallgrades_save')->name('overrallgrades.store');
 
     Route::post('/class/results/save','AdminController@classResults')->name('class.results');
+    Route::get('/studentterm/view','AdminController@termview')->name('studentterm');
+    Route::post('/studentterm','AdminController@term_results')->name('studentterm.results');
 
 
 

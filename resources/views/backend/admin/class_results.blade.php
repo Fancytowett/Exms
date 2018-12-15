@@ -54,6 +54,7 @@
                                 <th>{{$subject->short_name}}</th>
                             @endforeach
                             <th>Total Marks</th>
+
                             <th>Position</th>
                         </tr>
 
@@ -111,7 +112,7 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
-            //$('#myTable').DataTable();
+            // $('#myTable').DataTable();
             $('#myTable').DataTable( {
                 dom: 'Bfrtip',
                 buttons: [

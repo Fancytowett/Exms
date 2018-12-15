@@ -7,6 +7,7 @@ use App\Darasa;
 use App\Exports\StudentsExport;
 use App\Guardian;
 use App\Mass_assigment;
+use App\Result;
 use App\Stream;
 use App\Student;
 use App\Student_subject;
@@ -285,4 +286,6 @@ class ClerkController extends Controller
        // Mass_assigment::create($request->all());
         return back()->with('successMsg','Successfully Saved');
     }
+
+
 }

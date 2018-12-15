@@ -10,25 +10,15 @@
                 @endif
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="text-center">Grades </h2>
+                        <h2 class="text-center">Overall Grades </h2>
                     </div>
 
                     <div class="card-body">
-                        <form action="{{route('grade.store')}}" method="post">
+                        <form action="{{route('overrallgrades.store')}}" method="post">
                             @csrf
+
                             <div class="form-group">
-                                <label for="name">Subject:</label>
-                                <select name="subject_id" class="form-control">
-                                    @foreach($subjects as $subject)
-                                        <option value="{{$subject->id}}">{{$subject->name}}</option>
-                                    @endforeach
-                                </select>
-                                @if($errors->has('subject'))
-                                    <p class="text-danger">{{$errors->first('subject')}}</p>
-                                @endif
-                            </div>
-                            <div class="form-group">
-                                <label for="Minrange">Subject:</label>
+                                <label for="Minrange">Min Range:</label>
                                 <input type="number" name="minrange" class="form-control" placeholder="Minimum Range">
                                 @if($errors->has('minrange'))
                                     <p class="text-danger">{{$errors->first('minrange')}}</p>

@@ -25,7 +25,8 @@ class CreateResultUploadsTable extends Migration
             $table->foreign('exam_id')->references('id')->on('exams')->onDelete('cascade');
             $table->integer('term_id')->unsigned();
             $table->foreign('term_id')->references('id')->on('terms')->onDelete('cascade');
-            $table->string('score');
+            $table->integer('score');
+            $table->string('grade');
             $table->string('set_name');
             $table->timestamps();
         });

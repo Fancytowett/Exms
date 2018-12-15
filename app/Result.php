@@ -36,6 +36,11 @@ class Result extends Model
         return$this->belongsTo('App\Student');
      }
 
+    public function grade()
+    {
+        return $this->belongsTo('App\Grade');
+     }
+
 
 }
 

@@ -6,6 +6,8 @@ use App\Contact;
 use App\Darasa;
 use App\Exam;
 use App\Exports\ResultsExport;
+use App\Grade;
+use App\Overrallgrade;
 use App\Result;
 use App\ResultUpload;
 use App\Stream;
@@ -109,18 +111,56 @@ class AdminController extends Controller
             'subject_id' => 'required',
             'minrange' => 'required|numeric',
             'maxrange' => 'required|numeric',
+            'grade'=>'required'
 
         ]);
+        $list_errors=[];
+//        $exists=0;
+//        $overlap=0;
+        $subject_id = $request->input('subject_id');
+        foreach ($subject_id as $subject) {
+            $min = $request->input('minrange');
+            $max = $request->input('maxrange');
+            $score = $request->input('grade');
+            $score=strtoupper($score);
+            $g = Grade::where(['subject_id' => $subject, 'minrange' => $min, 'maxrange' => $max])->exists();
+            $x= Grade::where(['subject_id' => $subject,'grade'=>$score])->exists();
+            if ($g or $x ) {
+                $list_errors[]="Grade exists ";
+//           $exists++;
+            } else  {
+
+                $latest= Grade::where(['subject_id' => $subject])->latest()->first();
+
+                if($latest==null or ($max==$latest->minrange-1)) {
+//                   dd($latest);
+                    $grade = new Grade();
+
+                    $grade->subject_id = $subject;
+                    $grade->minrange = $min;
+                    $grade->maxrange = $max;
+                    $grade->grade = $score;
+                    $grade->save();
+                }else{
+//                   $overlap++;
+                    $list_errors[]="Overlap of grades";
 
 
-        $grade = new Grade();
-        $grade->subject_id = $request->input('subject_id');
-        $grade->minrange = $request->input('minrange');
-        $grade->maxrange = $request->input('maxrange');
-        $grade->grade = $request->input('grade');
-        $grade->save();
+                }
 
-        return back()->with('successMsg', 'Grade successfully added');
+            }
+
+        }
+        $list_errors[]="No error";
+        foreach ($list_errors as $error){
+            $error;
+        }
+////        dd($error);
+//        if($error!=null){
+//            return back()->with("errorMsg","Oops!,Could not Add the Grade ",compact('error'));
+//        }else
+
+        return back()->with("successMsg", "Grade successfully added.$error");
     }
 
     public function termCreate()
@@ -224,22 +264,22 @@ class AdminController extends Controller
 
 //        dd($student->class_id);
         foreach ($subject_id as $subject){
-                    $ss=Student_subject::where([
-                        'subject_id'=>$subject,
-                        'class_id'=>$student->class_id,
-                        'student_id'=>$student->id,
-                        'stream_id'=>$student->stream_id])
-                        ->first();
+            $ss=Student_subject::where([
+                'subject_id'=>$subject,
+                'class_id'=>$student->class_id,
+                'student_id'=>$student->id,
+                'stream_id'=>$student->stream_id])
+                ->first();
 
-                    if ($ss==null)
-                    {
-                        Student_subject::create([
-                            'subject_id'=>$subject,
-                            'user_id'=>Auth::user()->id,
-                            'student_id'=>$student->id,
-                            'class_id'=>$student->class_id,
-                            'stream_id'=>$student->stream_id]);
-                    }
+            if ($ss==null)
+            {
+                Student_subject::create([
+                    'subject_id'=>$subject,
+                    'user_id'=>Auth::user()->id,
+                    'student_id'=>$student->id,
+                    'class_id'=>$student->class_id,
+                    'stream_id'=>$student->stream_id]);
+            }
 
 
 
@@ -405,21 +445,44 @@ class AdminController extends Controller
             if ($student != null) {
                 $student_id = $student->id;
                 $res = ResultUpload::where(['subject_id' => $subject_id,
-                                            'student_id' => $student_id,
-                                            'user_id' => Auth::user()->id,
-                                            'term_id' => $term_id,
-                                            'exam_id' => $exam_id])->first();
+                    'student_id' => $student_id,
+                    'user_id' => Auth::user()->id,
+                    'term_id' => $term_id,
+                    'exam_id' => $exam_id])->first();
 
 //                dd($res);
                 if ($res == null) {
+                    DB::enableQueryLog();
+                    $grade=DB::select('SELECT `grade` FROM `grades` WHERE ? BETWEEN `minrange`AND`maxrange` AND  subject_id=?',[$data['score'],$subject_id]);
 
-                    ResultUpload::create(['subject_id' => $subject_id,
-                        'score' => $data['score'],
-                        'student_id' => $student_id,
-                        'user_id' => Auth::user()->id,
-                        'term_id' => $term_id,
-                        'set_name'=>$set_name.'',
-                        'exam_id' => $exam_id]);
+//                               dd($grade[0]->grade);
+
+//                    $queries = DB::getQueryLog();
+//                         dd($queries);
+
+
+                        $upload= new ResultUpload();
+                                 $upload->subject_id = $subject_id;
+                                 $upload->score =$data['score'];
+                                 $upload->student_id = $student_id;
+                                 $upload->user_id= Auth::user()->id;
+                                 $upload->term_id =$term_id;
+                                 $upload-> set_name =$set_name;
+                                 $upload->exam_id = $exam_id;
+                                 $upload->grade =$grade[0]->grade;
+                                 $upload->save();
+//                                 dd($upload);
+//                        ResultUpload::create([
+//                                'subject_id' => $subject_id,
+//                                'score' => $data['score'],
+//                                'student_id' => $student_id,
+//                                'user_id' => Auth::user()->id,
+//                                'term_id' => $term_id,
+//                                'set_name' => $set_name.'',
+//                                'exam_id' => $exam_id,
+//                                'grade' => "C"
+//                            ]);
+
                     $success++;
                 } else {
                     $failures++;
@@ -432,8 +495,8 @@ class AdminController extends Controller
         }
         // dd($data_big);
         return redirect()->route('confirm')
-                         ->with('successMsg', "successfully inserted $success. Errors $failures. student not existing $non_existant")
-                         ->with('set_name',$set_name);
+            ->with('successMsg', "successfully inserted $success. Errors $failures. student not existing $non_existant")
+            ->with('set_name',$set_name);
 
     }
 
@@ -468,13 +531,14 @@ class AdminController extends Controller
             $upload->term_id = $result->term_id;
             $upload->exam_id = $result->exam_id;
             $upload->score = $result->score;
+            $upload->grade = $result->grade;
             $upload->set_name = $result->set_name;
             $upload->save();
 
 
             $result->delete();
         }
-            return back()->with('set_name',$set_name)->with('successMsg','Sucessfully commited');
+        return back()->with('set_name',$set_name)->with('successMsg','Sucessfully commited');
 
 
 
@@ -523,7 +587,7 @@ class AdminController extends Controller
         $streams=Stream::all();
         $subjects=Subject::all();
 
-         return view('backend.admin.stream_result',compact('exams','streams','subjects'));
+        return view('backend.admin.stream_result',compact('exams','streams','subjects'));
     }
 
     public function stream_result_save(Request $request)
@@ -563,27 +627,32 @@ class AdminController extends Controller
 
             $data['names'] = $student->fname . '  ' . $student->lname;
             $data['adm'] = $student->adm_no;
+            $data['id'] = $student->id;
+            $data['exam_id'] = $exam_id;
             $data['total'] = $total;
 
+            $studentmarks=$total;
 
-                $results[] = $data;
-            }
-           // dd($results);
-            $exams = Exam::all();
-            $streams = Stream::all();
-            //  $subjects=Subject::all();
+            $results[] = $data;
+        }
+//            dd($studentmarks);
+        $exams = Exam::all();
+        $streams = Stream::all();
+        //  $subjects=Subject::all();
 //        foreach ($results as $result){
 //            foreach ($result as $key=>$value){
 //               var_dump($value);
 //            }
 //        }
+//        dd($student);
 
-            rsort($marks);
 
-            //dd($marks);
-            return view('backend.admin.stream_result', compact('exams', 'streams', 'subjects', 'results','marks'));
+        rsort($marks);
 
-            // return back();
+        //dd($marks);
+        return view('backend.admin.stream_result', compact('exams', 'exam_id','streams', 'subjects', 'results','marks','student','studentmarks'));
+
+        // return back();
 
 
     }
@@ -599,7 +668,7 @@ class AdminController extends Controller
 
         $streams = Stream::whereIn('id',$stream_id)->get();
 
-     //   dd($streams);
+        //   dd($streams);
 
 
 
@@ -641,22 +710,187 @@ class AdminController extends Controller
         $exams=Exam::all();
 
 //        dd($results);
-        return view('backend.admin.class_results', compact('exams', 'streams', 'subjects', 'results','marks'));
+        return view('backend.admin.class_results', compact('exams', 'streams', 'subjects', 'results','marks','student','exam_id'));
 
         // return back();
 
 
     }
 
+    public function termview()
+    {
+        $exams=Exam::all();
+        $darasas=Darasa::all();
+
+        return view('backend.admin.student_term_results', compact('exams', 'darasas')) ;
+
+    }
+
+    public function term_results(Request $request)
+
+    {
+        $this->validate($request,[
+            'exam_ids'=>'required',
+            'darasa'=>'required',
+        ]);
+        $darasas=Darasa::all();
+        $exam_ids=$request->input('exam_ids');
+        $darasa=$request->input('darasa');
+        $subjects = Subject::all();
+        $students = Student::where(['class_id'=>$darasa])->get();
+        $bigger=[];
+        foreach ($students as $student)
+        {
+            $one_student['details']=$student;
+            $all_subjects=[];
+
+            foreach ($subjects as $subject){
+                $singe_subject=[];
+                foreach ($exam_ids as $exam_id) {
+                    $res = Result::where(['exam_id' => $exam_id, 'student_id' => $student->id, 'subject_id' => $subject->id]);
+                    if ($res->exists())
+                    {
+                        $res=$res->first();
+                        $singe_subject[]=$res->score;
+                    }else{
+                        $singe_subject[]=0;
+                    }
+                }
+
+
+                $avg=array_sum($singe_subject)/sizeof($singe_subject);
+
+                $singe_subject[]=$avg;
+
+                $all_subjects[$subject->short_name]=$singe_subject;
+            }
+
+
+            $one_student['scores']=$all_subjects;
+            $bigger[]= $one_student;
+        }
+        $exams=Exam::all();
+//        dd($bigger);
+
+//        $exam1=$request->input('exam_id');
+//        $exam2=$request->input('exam_id');
+////        dd($exam2);
+//        $exam3=$request->input('exam_id');
+////        dd($exam3);
+//        $student_id=$request->input('student_id');
+//        $subject_id=$request->input('subject_id');
+//        $cat1=Result::where(['exam_id'=>$exam1,'student_id'=>$student_id,'subject_id'=>$subject_id])->first();
+////        dd($cat1->score);
+//        $cat2=Result::where(['exam_id'=>$exam2,'student_id'=>$student_id,'subject_id'=>$subject_id])->first();
+//        $main=Result::where(['exam_id'=>$exam3,'student_id'=>$student_id,'subject_id'=>$subject_id])->first();
+//        $avcat1=(20/100)*$cat1->score;
+//        dd($avcat1);
+//        $avcat2=20/100*$cat2->score;
+//        $avmain=60/100*$main->score;
+//        $result=($avcat1+$avcat2+$avmain);
+//        dd($result);
+        return view('backend.admin.student_term_results', compact('exams', 'result','streams', 'subjects','exam_id','students','darasas')) ;
+    }
+
     public function class_results ()
 
     {
 
+        $exams = Exam::all();
+        $streams = Stream::all();
+        $subjects = Subject::all();
+
+        return view('backend.admin.class_results', compact('exams', 'streams', 'subjects'));
+    }
+
+    public function overrallgrades()
+    {
+        return view('backend.admin.overall_grade');
+    }
+
+    public function overrallgrades_save(Request $request)
+
+    {
+        $this->validate($request,[
+            'minrange'=>'required',
+            'maxrange'=>'required',
+            'grade'=>'required'
+
+        ]);
+
+        Overrallgrade::create($request->all());
+
+        return back()->with('successMsg','successfully saved');
+    }
+
+    public function studentreport(Request $request)
+    {
+        $this->validate($request, [
+            'stream_id' => 'required',
+            'exam_id' => 'required',
+            'adm_no' => 'required',
+        ]);
+        $stream_id = $request->input('stream_id');
+        $exam_id = $request->input('exam_id');
+        $adm = $request->input('adm_no');
+        $student_1=Student::where(['adm_no'=>$adm])->first();
+        if($student_1==null){
+            return back()->with('successMsg','Student does not exist');
+        }
+
+
+        $streams = Stream::whereIn('id',$stream_id)->get();
+        $total_1=0;
+
+        $subjects = Subject::all();
+        $marks=[];
+        foreach($streams as $stream) {
+            $students = $stream->students;
+
+            foreach ($students as $student) {
+                $results_1 = Result::where(['exam_id' => $exam_id, 'student_id' => $student->id])->get();
+                // dd($results_1);
+                $total = 0;
+
+                $data = [];
+                // dd($data);
+                //$data2=[];
+                foreach ($results_1 as $single) {
+                    $total += $single->score;
+                    $data[$single->subject->short_name] = $single->score;
+                    if ($single->student_id==$student_1->id)
+                        $total_1+=$single->score;
+
+                }
+                $marks[] = $total;
+                $results[] = $data;
+
+
+            }
+        }
+
+
+
+        rsort($marks);
+        $exams=Exam::all();
+        $position= array_search($total_1, $marks)+1;
+        $results= Result::where(['exam_id' => $exam_id, 'student_id' => $student_1->id])->get();
+        $student=$student_1;
+        $studentmarks=$total_1;
+        $size=sizeof($marks);
+        $darasas=Darasa::all();
+        $streams=Stream::all();
+//        dd($position);
+        return view('backend.admin.studentreport',compact('results','student','studentmarks','exams','position','size','darasas','streams'));
+    }
+
+    public function student_report()
+    {
         $exams=Exam::all();
         $streams=Stream::all();
-        $subjects=Subject::all();
+        $darasas=Darasa::all();
 
-        return view('backend.admin.class_results',compact('exams','streams','subjects'));
+        return view('backend.admin.studentreport',compact('exams','darasas','streams'));
     }
 
 }
